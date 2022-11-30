@@ -15,9 +15,15 @@
             </cli>
             <? else ?>
             <? if {$NED_TYPE = "generic"} ?>
-            <generic>
-                <ned-id xmlns:{$NED_ID}="http://tail-f.com/ns/ned-id/{$NED_ID}">{$NED_ID}:{$NED_ID}</ned-id>
-            </generic>
+                <generic>
+                    <ned-id xmlns:{$NED_ID}="http://tail-f.com/ns/ned-id/{$NED_ID}">{$NED_ID}:{$NED_ID}</ned-id>
+                </generic>
+            <? else ?>
+            <? if {$NED_TYPE = "netconf"} ?>
+                <netconf>
+                  <ned-id xmlns:{$NED_ID}="http://tail-f.com/ns/ned-id/{$NED_ID}">{$NED_ID}:{$NED_ID}</ned-id>
+                </netconf>
+            <? end ?>
             <? end ?>
             <? end ?>
 

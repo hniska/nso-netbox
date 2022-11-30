@@ -25,6 +25,7 @@ PROTOCOL_PORTS = {
     "telnet": 23,
     "http": 80,
     "https": 443,
+    "netconf": 830,
 }
 
 
@@ -256,20 +257,18 @@ class NetboxInventoryAction(Action):
                         for component in device_package.component:
                             # Find the component that ties to the NED name
                             # Note: The cisco-iosxr ned uses cisco-ios-xr as the component name. Pulling out "-"'s for this test
-                            if component.name.replace("-", "") in ned.replace("-", ""):
-                                # TODO: There is likely a better way to do this, but component.ned.cli is an ncs.maagic.Container, and can't figure out how to see if "empty" in Python
+                            #if component.name.replace("-", "") in ned.replace("-", ""):
+                                # TODO: There is likely a better way to do this, but component.ned.cli is an ncs.maagic.Container,
+                                # and can't figure out how to see if "empty" in Python
                                 # Is it a CLI ned?
-                                try:
-                                    component.ned.cli.ned_id
-                                    ned_type = "cli"
-                                except Error:
-                                    pass
-                                # Is it a Generic NED
-                                try:
-                                    component.ned.generic.ned_id
-                                    ned_type = "generic"
-                                except Error:
-                                    pass
+                            if component.ned.cli.ned_id:
+                                ned_type = "cli"
+                            elif component.ned.netconf.ned_id:
+                                ned_type = "netconf"
+                            elif component.ned.snmp.ned_id:
+                                ned_type = "snmp"
+                            else:
+                                ned_type = "generic"
 
                         # Port/Protocol Conversion Logic
                         if service.connection_protocol.string in PROTOCOL_PORTS.keys():

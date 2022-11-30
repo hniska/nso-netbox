@@ -11,6 +11,7 @@ from pynetbox.core.query import RequestError
 def verify_netbox(netbox_server):
     """Verify a NetBox Server is reachable"""
     nb = pynetbox.api(netbox_server.url, token=decrypt(netbox_server.api_token))
+    nb.http_session.verify = False
     try:
         status = nb.status()
     except RequestError as e: 
@@ -20,10 +21,10 @@ def verify_netbox(netbox_server):
             "status": True, 
             "message": f"Successfully connected to NetBox to query devices."
         }
-    except exceptions.ConnectionError:
+    except exceptions.ConnectionError as e:
         return {
             "status": False,
-            "message": f"Error connecting to NetBox Server at url {netbox_server.url}.",
+            "message": f"Error connecting to NetBox Server at url {netbox_server.url}. {str(e)}",
         }
 
     status_message = f"NetBox Version: {status['netbox-version']}, Python Version: {status['python-version']}, Plugins: {status['plugins']}, Workers Running: {status['rq-workers-running']}"
@@ -44,6 +45,7 @@ def devicelist_netbox(netbox_inventory, netbox_server, log=False):
 
     try:
         nb = pynetbox.api(netbox_server.url, token=decrypt(netbox_server.api_token))
+        nb.http_session.verify = False
 
         # Build the device query from the provided attributes to the inventory instance
         device_query = {}
@@ -105,6 +107,7 @@ def vmlist_netbox(netbox_inventory, netbox_server, log=False):
 
     try:
         nb = pynetbox.api(netbox_server.url, token=decrypt(netbox_server.api_token))
+        nb.http_session.verify = False
 
         # Build the VM query from the provided attributes to the inventory instance
         vm_query = {}

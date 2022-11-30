@@ -120,6 +120,8 @@ list netbox-inventory {
         enum telnet;
         enum http;
         enum https;
+        enum netconf;
+	enum snmp;
       }
       default ssh;
     }
